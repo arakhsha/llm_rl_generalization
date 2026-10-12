@@ -1,0 +1,28 @@
+defaults:
+  - _self_
+  - paths: default
+  - model: qwen3_1_7b
+  - data: gsm8k
+  - lora: default
+  - trainer: grpo
+  - experiment: null
+
+seed: 42
+# Resubmitting with the same run_name resumes from the latest checkpoint in that run's directory.
+run_name: grpo_${now:%Y%m%d-%H%M%S}
+resume: true
+
+wandb:
+  enabled: true
+  project: llm_rl_generalization
+  entity: null
+  tags: []
+
+hydra:
+  run:
+    dir: ${paths.output_root}/runs/${run_name}
+  sweep:
+    dir: ${paths.output_root}/multirun/${run_name}
+    subdir: ${hydra.job.num}
+  job:
+    chdir: false

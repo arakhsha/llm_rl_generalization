@@ -1,0 +1,4 @@
+name_or_path: Qwen/Qwen3-1.7B
+dtype: bfloat16
+# Qwen3 hybrid thinking; off keeps completions short (GSM8K solutions fit in a few hundred tokens).
+enable_thinking: false

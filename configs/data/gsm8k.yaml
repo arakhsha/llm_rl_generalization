@@ -1,0 +1,5 @@
+dataset: openai/gsm8k
+config: main
+# Held out from the train split for in-training evaluation; the test split is only used by eval.py.
+val_size: 256
+instruction: 'Please reason step by step, and put your final answer within \boxed{}.'

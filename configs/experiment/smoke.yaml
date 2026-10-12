@@ -1,0 +1,13 @@
+# @package _global_
+# End-to-end check at the real batch size: pipeline, peak memory, seconds per step, eval and checkpointing.
+run_name: smoke_${now:%Y%m%d-%H%M%S}
+wandb:
+  enabled: false
+  tags: [smoke]
+data:
+  val_size: 16
+trainer:
+  max_steps: 4
+  warmup_steps: 0
+  eval_steps: 4
+  save_steps: 4

@@ -1,0 +1,45 @@
+# Passed verbatim to trl.GRPOConfig; output_dir, run_name, seed and report_to are set in train.py.
+
+# Optimisation
+learning_rate: 1.0e-5  # LoRA needs ~10x the full fine-tuning LR (TRL default 1e-6)
+lr_scheduler_type: constant_with_warmup
+warmup_steps: 10
+max_steps: 250
+per_device_train_batch_size: 16  # completions per micro-batch
+gradient_accumulation_steps: 8   # 16 x 8 = 128 completions = 16 prompts x 8 generations per step
+max_grad_norm: 1.0
+bf16: true
+gradient_checkpointing: true
+model_init_kwargs:
+  dtype: ${model.dtype}
+
+# GRPO
+num_generations: 8
+max_completion_length: 512
+temperature: 1.0
+beta: 0.0  # no KL term, so no reference model
+loss_type: dapo
+scale_rewards: group
+num_iterations: 1
+chat_template_kwargs:
+  enable_thinking: ${model.enable_thinking}
+
+# Generation backend: vLLM sharing the training GPU. Set use_vllm=false to fall back to HF generate.
+use_vllm: true
+vllm_mode: colocate
+vllm_gpu_memory_utilization: 0.3
+vllm_max_model_length: 1024
+
+# Evaluation on the held-out validation prompts (sampled at the training temperature)
+eval_strategy: steps
+eval_steps: 50
+num_generations_eval: 4
+per_device_eval_batch_size: 64
+
+# Logging and checkpointing
+logging_steps: 1
+log_completions: true
+num_completions_to_print: 2
+save_strategy: steps
+save_steps: 50
+save_total_limit: 3
