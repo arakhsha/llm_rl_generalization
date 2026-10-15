@@ -1,0 +1,17 @@
+# @package _global_
+# End-to-end check at the real batch size: rollouts, peak memory, seconds per step, eval callback,
+# checkpointing and the final merge (written to the run directory instead of project space).
+run_name: alfworld_smoke_${oc.env:RUN_STAMP,${now:%Y%m%d-%H%M%S}}
+keep_dir: ${hydra:run.dir}/keep
+wandb:
+  enabled: false
+  tags: [alfworld, smoke]
+eval:
+  steps: 3
+  limit: 16
+trainer:
+  max_steps: 3
+  warmup_steps: 0
+  save_steps: 3
+  log_completions: true
+  num_completions_to_print: 1

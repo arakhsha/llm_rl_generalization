@@ -1,0 +1,14 @@
+# Packed by scripts/setup_alfworld.sbatch.
+data_dir: ${oc.env:ALFWORLD_DATA}
+# Games are extracted to node-local disk at job start.
+games_dir: ${oc.env:SLURM_TMPDIR,/tmp}/alfworld_${oc.env:SLURM_JOB_ID,local}
+# Worker processes stepping the environments in parallel; the sbatch scripts request 16 CPUs.
+num_workers: 14
+# Commands per episode (the usual ALFWorld limit is 50).
+max_steps: 50
+# Valid commands appended to each observation: none | local (all but go to/look/inventory) | all.
+# The base model wins ~0% of games with none; all roughly triples the tokens per step.
+admissible_commands: local
+# Token budget for a whole episode (model turns + observations), and vLLM's context length.
+max_completion_length: 6144
+max_model_len: 8192

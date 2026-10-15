@@ -1,0 +1,46 @@
+# Passed verbatim to trl.GRPOConfig; output_dir, run_name, seed and report_to are set in train_alfworld.py.
+# One "completion" is a whole episode: every model turn plus the observations returned by the `act` tool
+# (observation tokens are masked out of the loss).
+
+# Optimisation
+learning_rate: 2.0e-5  # LoRA: ~10x a full fine-tuning RL learning rate
+lr_scheduler_type: constant_with_warmup
+warmup_steps: 5
+max_steps: 150
+per_device_train_batch_size: 2  # episodes per micro-batch (each up to ~7k tokens; logits are 248k wide)
+# gradient_accumulation_steps is derived from episodes_per_step and the number of GPUs (train_alfworld.py).
+max_grad_norm: 1.0
+bf16: true
+gradient_checkpointing: true
+model_init_kwargs:
+  dtype: ${model.dtype}
+
+# GRPO
+num_generations: 8
+max_completion_length: ${env.max_completion_length}
+max_tool_calling_iterations: ${env.max_steps}
+mask_truncated_completions: true  # episodes cut off mid-turn by the token budget get no gradient
+temperature: 1.0
+beta: 0.0  # no KL term, so no reference model
+loss_type: dapo
+scale_rewards: group
+num_iterations: 1
+chat_template_kwargs:
+  enable_thinking: ${model.enable_thinking}
+
+# Generation backend: vLLM sharing the training GPU
+use_vllm: true
+vllm_mode: colocate
+vllm_gpu_memory_utilization: 0.35
+vllm_max_model_length: ${env.max_model_len}
+
+# Validation runs in AlfworldEvalCallback (greedy, full episodes) instead of the Trainer's eval loop.
+eval_strategy: "no"
+
+# Logging and checkpointing
+logging_steps: 1
+# Whole episodes are long; greedy validation transcripts are saved by the eval callback instead.
+log_completions: false
+save_strategy: steps
+save_steps: 25
+save_total_limit: 3

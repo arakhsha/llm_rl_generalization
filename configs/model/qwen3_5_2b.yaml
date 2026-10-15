@@ -1,0 +1,4 @@
+name_or_path: Qwen/Qwen3.5-2B
+dtype: bfloat16
+# Qwen3.5-2B defaults to non-thinking; short turns keep multi-turn episodes within the token budget.
+enable_thinking: false

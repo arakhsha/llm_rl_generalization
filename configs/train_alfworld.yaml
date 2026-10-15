@@ -1,0 +1,40 @@
+defaults:
+  - _self_
+  - paths: default
+  - model: qwen3_5_2b
+  - env: alfworld
+  - lora: qwen3_5
+  - trainer: grpo_alfworld
+  - experiment: null
+
+seed: 42
+# Resubmitting with the same run_name resumes from the latest checkpoint in that run's directory.
+# RUN_STAMP is set once by train_alfworld.sbatch so that every GPU process resolves the same name.
+run_name: alfworld_grpo_${oc.env:RUN_STAMP,${now:%Y%m%d-%H%M%S}}
+resume: true
+# Episodes per optimizer step (8 games x 8 rollouts), generated together; split across GPUs.
+episodes_per_step: 64
+
+# Greedy validation on the ALFWorld eval splits every `eval.steps` optimizer steps (and at the end).
+eval:
+  steps: 25
+  splits: [valid_seen, valid_unseen]
+  limit: null
+
+# After training, the adapter and the merged model are saved here (backed-up project space).
+keep_dir: ${paths.keep_root}/models/${run_name}
+
+wandb:
+  enabled: true
+  project: llm_rl_generalization
+  entity: null
+  tags: [alfworld]
+
+hydra:
+  run:
+    dir: ${paths.output_root}/runs/${run_name}
+  sweep:
+    dir: ${paths.output_root}/multirun/${run_name}
+    subdir: ${hydra.job.num}
+  job:
+    chdir: false
