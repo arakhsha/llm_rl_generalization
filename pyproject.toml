@@ -1,7 +1,7 @@
 [project]
 name = "llm-rl-generalization"
 version = "0.1.0"
-description = "RL fine-tuning experiments on LLMs (GRPO + LoRA) on GSM8K and ALFWorld"
+description = "RL fine-tuning experiments on LLMs (GRPO + LoRA) on GSM8K and ALFWorld, with WebShop evaluation"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -18,6 +18,20 @@ dependencies = [
     "alfworld==0.4.2",
     # Triton kernels for Qwen3.5's Gated DeltaNet layers; without it transformers falls back to a slow torch loop.
     "flash-linear-attention==0.5.2",
+    # WebShop evaluation: imports of WebShop's environment code (cloned by scripts/setup_webshop.sbatch).
+    # pyserini runs the Lucene search engine on Java 21 (module java/21.0.1); spaCy's small English model
+    # is used in WebShop's reward.
+    "pyserini==2.4.0",
+    "spacy>=3.8,<3.9",
+    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
+    "flask",
+    "beautifulsoup4",
+    "thefuzz",
+    "rich",
+    "cleantext",
+    "rank-bm25",
+    "gym==0.26.2",
+    "selenium",
 ]
 
 [dependency-groups]

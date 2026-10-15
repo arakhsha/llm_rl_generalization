@@ -20,6 +20,6 @@ wandb:
 
 hydra:
   run:
-    dir: ${paths.output_root}/eval/${now:%Y%m%d-%H%M%S}
+    dir: ${paths.output_root}/eval/${now:%Y%m%d-%H%M%S}-${oc.env:SLURM_JOB_ID,local}
   job:
     chdir: false

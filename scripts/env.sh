@@ -11,6 +11,8 @@ export TRITON_CACHE_DIR="$SCRATCH/caches/triton"   # default is ~/.triton
 export TMPDIR="${SLURM_TMPDIR:-$TMPDIR}"
 # alfworld creates this directory on import (default ~/.cache/alfworld); it holds the packed games.
 export ALFWORLD_DATA="$SCRATCH/llm_rl_generalization/data/alfworld"
+# WebShop checkout with its product data and search index (scripts/setup_webshop.sbatch).
+export WEBSHOP_DIR="$SCRATCH/llm_rl_generalization/data/webshop"
 export TOKENIZERS_PARALLELISM=false
 # FlashInfer's top-k/top-p sampler JIT-compiles with nvcc, which the nodes don't have; use vLLM's PyTorch sampler.
 export VLLM_USE_FLASHINFER_SAMPLER=0

@@ -1,0 +1,28 @@
+defaults:
+  - _self_
+  - paths: default
+  - model: qwen3_5_2b
+  - env: webshop
+
+seed: 42
+# Model to evaluate: HF id or a merged-model directory; adapter_path adds a LoRA adapter on top of it.
+model_path: ${model.name_or_path}
+adapter_path: null
+# Label for results and wandb; defaults to the adapter or model directory name.
+tag: null
+# Goal indices [start, stop): the test split of the WebShop paper.
+goals: [0, 500]
+limit: null
+temperature: 0.0
+gpu_memory_utilization: 0.85
+
+wandb:
+  enabled: true
+  project: llm_rl_generalization
+  entity: null
+
+hydra:
+  run:
+    dir: ${paths.output_root}/eval_webshop/${now:%Y%m%d-%H%M%S}-${oc.env:SLURM_JOB_ID,local}
+  job:
+    chdir: false

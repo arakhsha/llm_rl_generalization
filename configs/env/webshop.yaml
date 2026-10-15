@@ -1,0 +1,15 @@
+# WebShop checkout with the full product set and search index (scripts/setup_webshop.sbatch).
+webshop_dir: ${oc.env:WEBSHOP_DIR}
+# Worker processes stepping the environments; each loads the full product set (~1.18M products).
+num_workers: 2
+# Actions per episode (15, as in verl-agent's WebShop setup).
+max_steps: 15
+# WebShop's environment runs search[...] from any page, although only the search page lists it among the
+# available actions; false makes it invalid elsewhere (a stricter variant).
+search_any_page: true
+# Seeds the prices of products listed with a price range and the price limits in the instructions,
+# so every evaluation sees the same goals.
+seed: 0
+# Token budget for a whole episode (model turns + observations), and vLLM's context length.
+max_completion_length: 16384
+max_model_len: 20480

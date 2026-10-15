@@ -5,6 +5,8 @@ re-tokenized, built the way TRL's own tool-calling loop builds it: tool results 
 chat template and appended as tokens that are masked out of the loss (env_mask 0), and model turns and
 tool results share one max_completion_length budget. Each turn, all running episodes are generated in
 one vLLM call and their environments step in parallel in an EnvPool.
+
+ALFWorld is the default environment; WebShop evaluation (llm_rl.webshop) passes its own tool and prompt.
 """
 
 import time
@@ -36,7 +38,7 @@ def load_tokenizer(name_or_path: str) -> tuple[PreTrainedTokenizerBase, str | No
 
 @dataclass
 class Episode:
-    row: dict  # passed to the environment's reset(): an ALFWorld manifest row
+    row: dict  # passed to the environment's reset(): an ALFWorld manifest row or a WebShop goal
     prompt_ids: list[int]
     completion_ids: list[int] = field(default_factory=list)
     logprobs: list[float] = field(default_factory=list)
@@ -52,7 +54,8 @@ class Episode:
         if self.stats["won"]:
             return "won"
         if self.stats["done"]:
-            return "out_of_steps"
+            # A WebShop episode also ends when the model buys a product that does not fully match.
+            return "bought" if self.stats.get("bought") else "out_of_steps"
         return self.end
 
 
